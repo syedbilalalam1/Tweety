@@ -1,0 +1,11 @@
+{
+    "name": "tweety-bridge",
+    "version": "1.0.0",
+    "description": "Twitter bridge service for Tweety bot",
+    "main": "twitter_bridge.js",
+    "dependencies": {
+      "agent-twitter-client": "latest",
+      "express": "^4.18.2",
+      "dotenv": "^16.0.3"
+    }
+  }
