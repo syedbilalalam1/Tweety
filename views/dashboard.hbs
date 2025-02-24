@@ -200,6 +200,18 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Control Buttons -->
         <div class="flex justify-end gap-4 mb-8">
+            <button id="generateTweetButton" onclick="generateTrendingTweet()" 
+                    class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors">
+                Generate Random Tweet
+            </button>
+            <button id="refreshTrendsButton" onclick="refreshTrends()" 
+                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                Refresh Trends
+            </button>
+            <button id="testModeButton" onclick="enableTestMode()" 
+                    class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+                Enable 30s Test
+            </button>
             <button id="pauseButton" onclick="togglePause()" 
                     class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
                 Pause
@@ -210,37 +222,66 @@
             </button>
         </div>
 
-        <!-- Next Tweet Timers -->
-        <div class="grid grid-cols-1 gap-6 mb-8">
-            <!-- Trending Tweet Schedule -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-xl font-semibold mb-4">Next Trending Tweet Schedule</h2>
-                <div class="grid grid-cols-4 gap-4">
-                    <div class="text-center p-4 rounded-lg bg-gray-50">
-                        <div class="font-semibold mb-2">Pakistan</div>
-                        <div id="pakistanTimer" class="text-lg font-mono">--:--:--</div>
-                    </div>
-                    <div class="text-center p-4 rounded-lg bg-gray-50">
-                        <div class="font-semibold mb-2">United Kingdom</div>
-                        <div id="ukTimer" class="text-lg font-mono">--:--:--</div>
-                    </div>
-                    <div class="text-center p-4 rounded-lg bg-gray-50">
-                        <div class="font-semibold mb-2">India</div>
-                        <div id="indiaTimer" class="text-lg font-mono">--:--:--</div>
-                    </div>
-                    <div class="text-center p-4 rounded-lg bg-gray-50">
-                        <div class="font-semibold mb-2">United States</div>
-                        <div id="usaTimer" class="text-lg font-mono">--:--:--</div>
-                    </div>
+        <!-- Next Trending Tweet Schedule -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Next Trending Tweet Schedule</h2>
+            <div class="grid grid-cols-4 gap-4">
+                <div class="text-center p-4 rounded-lg" id="pakistanTimerCard">
+                    <div class="font-semibold mb-2">Pakistan</div>
+                    <div id="pakistanTimer" class="text-lg font-mono">--:--:--</div>
+                </div>
+                <div class="text-center p-4 rounded-lg" id="usaTimerCard">
+                    <div class="font-semibold mb-2">United States</div>
+                    <div id="usaTimer" class="text-lg font-mono">--:--:--</div>
+                </div>
+                <div class="text-center p-4 rounded-lg" id="japanTimerCard">
+                    <div class="font-semibold mb-2">Japan</div>
+                    <div id="japanTimer" class="text-lg font-mono">--:--:--</div>
+                </div>
+                <div class="text-center p-4 rounded-lg" id="indiaTimerCard">
+                    <div class="font-semibold mb-2">India</div>
+                    <div id="indiaTimer" class="text-lg font-mono">--:--:--</div>
+                </div>
+                <div class="text-center p-4 rounded-lg" id="indonesiaTimerCard">
+                    <div class="font-semibold mb-2">Indonesia</div>
+                    <div id="indonesiaTimer" class="text-lg font-mono">--:--:--</div>
+                </div>
+                <div class="text-center p-4 rounded-lg" id="ukTimerCard">
+                    <div class="font-semibold mb-2">United Kingdom</div>
+                    <div id="ukTimer" class="text-lg font-mono">--:--:--</div>
+                </div>
+                <div class="text-center p-4 rounded-lg" id="brazilTimerCard">
+                    <div class="font-semibold mb-2">Brazil</div>
+                    <div id="brazilTimer" class="text-lg font-mono">--:--:--</div>
+                </div>
+                <div class="text-center p-4 rounded-lg" id="turkeyTimerCard">
+                    <div class="font-semibold mb-2">Turkey</div>
+                    <div id="turkeyTimer" class="text-lg font-mono">--:--:--</div>
+                </div>
+                <div class="text-center p-4 rounded-lg" id="mexicoTimerCard">
+                    <div class="font-semibold mb-2">Mexico</div>
+                    <div id="mexicoTimer" class="text-lg font-mono">--:--:--</div>
+                </div>
+                <div class="text-center p-4 rounded-lg" id="franceTimerCard">
+                    <div class="font-semibold mb-2">France</div>
+                    <div id="franceTimer" class="text-lg font-mono">--:--:--</div>
+                </div>
+                <div class="text-center p-4 rounded-lg" id="saudiTimerCard">
+                    <div class="font-semibold mb-2">Saudi Arabia</div>
+                    <div id="saudiTimer" class="text-lg font-mono">--:--:--</div>
+                </div>
+                <div class="text-center p-4 rounded-lg" id="canadaTimerCard">
+                    <div class="font-semibold mb-2">Canada</div>
+                    <div id="canadaTimer" class="text-lg font-mono">--:--:--</div>
                 </div>
             </div>
+        </div>
 
-            <!-- Random Tweet Schedule -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h2 class="text-xl font-semibold mb-4">Random Tweet Schedule (6 per day)</h2>
-                <div class="grid grid-cols-6 gap-4" id="randomTweetSchedule">
-                    <!-- Will be populated by JavaScript -->
-                </div>
+        <!-- Random Tweet Schedule -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Random Tweet Schedule (6 per day)</h2>
+            <div class="grid grid-cols-6 gap-4" id="randomTweetSchedule">
+                <!-- Will be populated by JavaScript -->
             </div>
         </div>
 
@@ -253,16 +294,48 @@
                     <div id="pakistanTrend" class="text-sm">Loading...</div>
                 </div>
                 <div class="p-4 rounded-lg bg-gray-50">
-                    <h3 class="font-semibold mb-2">United Kingdom</h3>
-                    <div id="ukTrend" class="text-sm">Loading...</div>
+                    <h3 class="font-semibold mb-2">United States</h3>
+                    <div id="usaTrend" class="text-sm">Loading...</div>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">Japan</h3>
+                    <div id="japanTrend" class="text-sm">Loading...</div>
                 </div>
                 <div class="p-4 rounded-lg bg-gray-50">
                     <h3 class="font-semibold mb-2">India</h3>
                     <div id="indiaTrend" class="text-sm">Loading...</div>
                 </div>
                 <div class="p-4 rounded-lg bg-gray-50">
-                    <h3 class="font-semibold mb-2">United States</h3>
-                    <div id="usaTrend" class="text-sm">Loading...</div>
+                    <h3 class="font-semibold mb-2">Indonesia</h3>
+                    <div id="indonesiaTrend" class="text-sm">Loading...</div>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">United Kingdom</h3>
+                    <div id="ukTrend" class="text-sm">Loading...</div>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">Brazil</h3>
+                    <div id="brazilTrend" class="text-sm">Loading...</div>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">Turkey</h3>
+                    <div id="turkeyTrend" class="text-sm">Loading...</div>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">Mexico</h3>
+                    <div id="mexicoTrend" class="text-sm">Loading...</div>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">France</h3>
+                    <div id="franceTrend" class="text-sm">Loading...</div>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">Saudi Arabia</h3>
+                    <div id="saudiTrend" class="text-sm">Loading...</div>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">Canada</h3>
+                    <div id="canadaTrend" class="text-sm">Loading...</div>
                 </div>
             </div>
         </div>
@@ -323,8 +396,16 @@
         const countrySchedule = [
             { name: 'Pakistan', id: 'pakistan' },
             { name: 'United States', id: 'usa' },
+            { name: 'Japan', id: 'japan' },
             { name: 'India', id: 'india' },
-            { name: 'United Kingdom', id: 'uk' }
+            { name: 'Indonesia', id: 'indonesia' },
+            { name: 'United Kingdom', id: 'uk' },
+            { name: 'Brazil', id: 'brazil' },
+            { name: 'Turkey', id: 'turkey' },
+            { name: 'Mexico', id: 'mexico' },
+            { name: 'France', id: 'france' },
+            { name: 'Saudi Arabia', id: 'saudi' },
+            { name: 'Canada', id: 'canada' }
         ];
 
         // Store the current active country index and state in localStorage
@@ -334,23 +415,39 @@
         }
 
         function setCurrentCountryIndex(index) {
+            if (index === null || index === undefined) {
+                index = 0;
+            }
             localStorage.setItem('currentCountryIndex', index.toString());
         }
 
         function getLastPostTime() {
-            return localStorage.getItem('lastPostTime');
+            const time = localStorage.getItem('lastPostTime');
+            return time ? parseInt(time) : null;
         }
 
         function setLastPostTime(time) {
-            localStorage.setItem('lastPostTime', time.toString());
+            if (time === null) {
+                localStorage.removeItem('lastPostTime');
+            } else {
+                localStorage.setItem('lastPostTime', time.toString());
+            }
         }
 
         function getStartTime() {
-            return localStorage.getItem('startTime');
+            const time = localStorage.getItem('startTime');
+            return time ? parseInt(time) : null;
         }
 
         function setStartTime(time) {
+            if (!time) {
+                const now = new Date();
+                const nextHour = new Date(now);
+                nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
+                time = nextHour.getTime();
+            }
             localStorage.setItem('startTime', time.toString());
+            localStorage.setItem('currentCountryIndex', '0'); // Reset index when setting new start time
         }
 
         function getLastTrendRefresh() {
@@ -361,45 +458,345 @@
             localStorage.setItem('lastTrendRefresh', time.toString());
         }
 
-        function resetCountrySequence() {
-            setCurrentCountryIndex(0);
-            setLastPostTime(Date.now());
-            setStartTime(Date.now());
-            refreshTrends();
+        async function loadTrends() {
+            try {
+                // Check localStorage cache first
+                const cachedData = localStorage.getItem('cachedTrends');
+                const lastRefresh = localStorage.getItem('lastTrendRefresh');
+                const now = Date.now();
+                const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
+
+                // Use cache if available and not expired
+                if (cachedData && lastRefresh && (now - parseInt(lastRefresh) < CACHE_DURATION)) {
+                    console.log('Using cached trends, age:', Math.floor((now - parseInt(lastRefresh)) / 1000 / 60), 'minutes');
+                    updateTrendDisplay(JSON.parse(cachedData));
+                    return;
+                }
+
+                console.log('Cache expired or not found, fetching fresh trends...');
+                const response = await axios.get('/api/trends');
+                
+                if (response.data.error) {
+                    console.error('Failed to fetch trends:', response.data.error);
+                    showTrendError(response.data.error);
+                    return;
+                }
+
+                localStorage.setItem('cachedTrends', JSON.stringify(response.data));
+                localStorage.setItem('lastTrendRefresh', now.toString());
+                updateTrendDisplay(response.data);
+            } catch (error) {
+                console.error('Error loading trends:', error);
+                
+                // On error, try to use cached data even if expired
+                const cachedData = localStorage.getItem('cachedTrends');
+                if (cachedData) {
+                    console.log('Error fetching trends, using last known cached data');
+                    updateTrendDisplay(JSON.parse(cachedData));
+                } else {
+                    showTrendError(error.message);
+                }
+            }
         }
 
         async function refreshTrends() {
-            try {
-                console.log('🔄 Refreshing trends from RapidAPI...');
-                const response = await axios.get('/api/trends');
-                const trends = response.data;
-                
-                console.log('📊 New trends fetched:', trends);
-                
-                countrySchedule.forEach(country => {
-                    const trend = trends[country.id];
-                    const trendElement = document.getElementById(`${country.id}Trend`);
-                    if (trend) {
-                        console.log(`✅ ${country.name}: New trend - "${trend.name}"`);
-                        trendElement.textContent = trend.name;
-                        trendElement.classList.add('animate-pulse');
-                        setTimeout(() => trendElement.classList.remove('animate-pulse'), 2000);
-                    } else {
-                        console.warn(`⚠️ ${country.name}: Failed to fetch trend`);
-                        trendElement.textContent = 'Failed to fetch trend';
-                    }
-                });
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.className = 'mb-4 p-4 rounded';
+            statusDiv.classList.remove('hidden');
+            statusDiv.classList.add('bg-blue-100', 'text-blue-800');
+            statusDiv.textContent = 'Refreshing trends...';
 
-                setLastTrendRefresh(Date.now());
-                console.log('✨ Trend refresh cycle completed');
+            try {
+                // Force a fresh fetch by clearing the cache
+                localStorage.removeItem('cachedTrends');
+                localStorage.removeItem('lastTrendRefresh');
+                
+                const response = await axios.get('/api/trends');
+                if (response.data.error) {
+                    statusDiv.classList.remove('bg-blue-100', 'text-blue-800');
+                    statusDiv.classList.add('bg-red-100', 'text-red-800');
+                    statusDiv.textContent = 'Failed to refresh trends: ' + response.data.error;
+                    return;
+                }
+
+                localStorage.setItem('cachedTrends', JSON.stringify(response.data));
+                localStorage.setItem('lastTrendRefresh', Date.now().toString());
+                updateTrendDisplay(response.data);
+
+                statusDiv.classList.remove('bg-blue-100', 'text-blue-800');
+                statusDiv.classList.add('bg-green-100', 'text-green-800');
+                statusDiv.textContent = 'Trends refreshed successfully!';
+                
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                }, 3000);
             } catch (error) {
-                console.error('❌ Failed to refresh trends:', error);
-                countrySchedule.forEach(country => {
-                    const trendElement = document.getElementById(`${country.id}Trend`);
-                    trendElement.textContent = 'Error fetching trends';
-                });
+                statusDiv.classList.remove('bg-blue-100', 'text-blue-800');
+                statusDiv.classList.add('bg-red-100', 'text-red-800');
+                statusDiv.textContent = 'Failed to refresh trends: ' + error.message;
             }
         }
+
+        function updateTrendDisplay(trends) {
+            countrySchedule.forEach(country => {
+                const trendElement = document.getElementById(`${country.id}Trend`);
+                if (!trendElement) return;
+
+                const trend = trends[country.id];
+                if (!trend) {
+                    trendElement.textContent = 'No trends available';
+                    trendElement.classList.add('text-yellow-600');
+                    return;
+                }
+
+                if (trend.error) {
+                    trendElement.textContent = trend.error;
+                    trendElement.classList.add('text-yellow-600');
+                    return;
+                }
+
+                if (trend.name === 'Refreshing trends...') {
+                    trendElement.textContent = 'Refreshing trends...';
+                    trendElement.classList.add('text-blue-600');
+                    return;
+                }
+
+                // Clear any previous styling
+                trendElement.classList.remove('text-yellow-600', 'text-red-600', 'text-blue-600');
+                
+                // Display the trend
+                let trendHtml = trend.name;
+                if (trend.volume && trend.volume > 0) {
+                    trendHtml += `<div class="text-xs text-gray-500 mt-1">Volume: ${trend.volume.toLocaleString()}</div>`;
+                }
+                trendElement.innerHTML = trendHtml;
+            });
+        }
+
+        function showTrendError(message) {
+            countrySchedule.forEach(country => {
+                const trendElement = document.getElementById(`${country.id}Trend`);
+                if (trendElement) {
+                    trendElement.textContent = message || 'Error fetching trends';
+                    trendElement.classList.remove('text-yellow-600', 'text-blue-600');
+                    trendElement.classList.add('text-red-600');
+                }
+            });
+        }
+
+        function updateTimers() {
+            const now = new Date().getTime();
+            const startTime = getStartTime();
+            
+            if (!startTime) {
+                setStartTime();
+                return;
+            }
+
+            // If we're past the start time, calculate the next sequence start
+            if (now > startTime) {
+                const timePassed = now - startTime;
+                const isTestMode = timePassed < 60000; // Less than 1 minute indicates test mode
+                
+                if (isTestMode && timePassed >= 30000) { // 30 seconds passed in test mode
+                    // Move to next country
+                    const currentIndex = getCurrentCountryIndex();
+                    const nextIndex = (currentIndex + 1) % countrySchedule.length;
+                    setCurrentCountryIndex(nextIndex);
+                    
+                    // Set new start time to next hour (or 30 seconds if continuing test mode)
+                    const nextStart = now + 3600000; // Always set to next hour after test mode
+                    setStartTime(nextStart);
+                    
+                    // Refresh the page to update the sequence
+                    window.location.reload();
+                    return;
+                } else if (!isTestMode && timePassed >= 3600000) { // Normal mode: 1 hour passed
+                    const hoursPassed = Math.floor(timePassed / 3600000);
+                    const currentIndex = getCurrentCountryIndex();
+                    const nextIndex = (currentIndex + 1) % countrySchedule.length;
+                    setCurrentCountryIndex(nextIndex);
+                    
+                    const nextStart = startTime + (Math.ceil(hoursPassed) * 3600000);
+                    setStartTime(nextStart);
+                    
+                    // Refresh the page to update the sequence
+                    window.location.reload();
+                    return;
+                }
+            }
+
+            const currentIndex = getCurrentCountryIndex();
+            
+            countrySchedule.forEach((country, index) => {
+                const timerElement = document.getElementById(`${country.id}Timer`);
+                const cardElement = document.getElementById(`${country.id}TimerCard`);
+                
+                if (!timerElement || !cardElement) return;
+
+                // Reset all card styles first
+                cardElement.classList.remove('bg-yellow-50', 'bg-blue-50', 'bg-gray-50', 'bg-red-50', 'bg-green-50');
+
+                if (index < currentIndex) {
+                    // Already processed countries
+                    timerElement.innerHTML = `
+                        <div class="font-semibold text-green-600">Posted</div>
+                        <div class="text-xs text-gray-500 mt-1">Completed</div>
+                    `;
+                    cardElement.classList.add('bg-green-50');
+                } else if (index === currentIndex) {
+                    // Currently active country
+                    const timeLeft = Math.max(0, Math.floor((startTime - now) / 1000));
+                    if (timeLeft === 0) {
+                        // Time's up - show processing
+                        timerElement.innerHTML = `
+                            <div class="font-semibold text-blue-600">Processing</div>
+                            <div class="text-xs text-gray-500 mt-1">Generating tweet...</div>
+                        `;
+                        cardElement.classList.add('bg-blue-50');
+                        
+                        // Move to next country after a short delay
+                        setTimeout(() => {
+                            const nextIndex = (currentIndex + 1) % countrySchedule.length;
+                            if (nextIndex === 0) {
+                                // If we're going back to Pakistan (index 0), reset the sequence
+                                const nextHour = new Date();
+                                nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
+                                setStartTime(nextHour.getTime());
+                            }
+                            setCurrentCountryIndex(nextIndex);
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        // Show countdown
+                        timerElement.textContent = formatTime(timeLeft);
+                        cardElement.classList.add('bg-blue-50');
+                    }
+                } else {
+                    // Upcoming countries
+                    const waitHours = index - currentIndex;
+                    const targetTime = startTime + (waitHours * 3600000); // Convert hours to milliseconds
+                    const timeLeft = Math.max(0, Math.floor((targetTime - now) / 1000));
+                    
+                    timerElement.innerHTML = `
+                        ${formatTime(timeLeft)}
+                        <div class="text-xs text-gray-500 mt-1">${waitHours} hour${waitHours > 1 ? 's' : ''} in queue</div>
+                    `;
+                    cardElement.classList.add('bg-yellow-50');
+                }
+            });
+        }
+
+        // Add auto-refresh when timers update
+        setInterval(() => {
+            const currentIndex = getCurrentCountryIndex();
+            const startTime = getStartTime();
+            const now = new Date().getTime();
+            
+            if (startTime && now > startTime) {
+                const hoursPassed = Math.floor((now - startTime) / (60 * 60 * 1000));
+                if (hoursPassed >= 1) {
+                    // Refresh the page when moving to next country
+                    window.location.reload();
+                }
+            }
+        }, 1000);
+
+        // Add function to get tweet history
+        function getTweetHistory() {
+            const tweets = document.querySelectorAll('.tweet-history-item');
+            return Array.from(tweets).map(tweet => ({
+                country: tweet.dataset.country,
+                status: tweet.dataset.status,
+                timestamp: new Date(tweet.dataset.timestamp)
+            }));
+        }
+
+        async function resetSequence() {
+            try {
+                const statusDiv = document.getElementById('statusMessage');
+                statusDiv.className = 'mb-4 p-4 rounded';
+                statusDiv.classList.remove('hidden');
+                statusDiv.classList.add('bg-blue-100', 'text-blue-800');
+                statusDiv.textContent = 'Resetting sequence...';
+
+                // Call backend reset
+                const response = await axios.post('/dashboard/reset');
+                
+                if (response.data.success) {
+                    // Reset all frontend state
+                    localStorage.removeItem('currentCountryIndex');
+                    localStorage.removeItem('lastPostTime');
+                    localStorage.removeItem('isPaused');
+                    
+                    // Calculate and set new start time
+                    const now = new Date();
+                    const nextHour = new Date(now);
+                    nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
+                    setStartTime(nextHour.getTime());
+                    
+                    // Reset country index to Pakistan (0)
+                    setCurrentCountryIndex(0);
+                    
+                    // Reset pause state
+                    setPaused(false);
+                    
+                    // Reset random tweet schedule
+                    initializeRandomSchedule();
+                    
+                    // Update UI
+                    statusDiv.classList.remove('bg-blue-100', 'text-blue-800');
+                    statusDiv.classList.add('bg-green-100', 'text-green-800');
+                    statusDiv.textContent = 'Sequence reset. Starting from Pakistan in 1 hour.';
+                    
+                    // Force immediate timer updates
+                    updateTimers();
+                    updateRandomTweetSchedule();
+                    
+                    // Hide status message after 3 seconds
+                    setTimeout(() => {
+                        statusDiv.classList.add('hidden');
+                    }, 3000);
+                } else {
+                    throw new Error(response.data.message || 'Reset failed');
+                }
+            } catch (error) {
+                console.error('Reset error:', error);
+                const statusDiv = document.getElementById('statusMessage');
+                statusDiv.className = 'mb-4 p-4 rounded bg-red-100 text-red-800';
+                statusDiv.classList.remove('hidden');
+                statusDiv.textContent = 'Failed to reset sequence: ' + (error.response?.data?.message || error.message || 'Unknown error');
+            }
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize random schedule if needed
+            if (!getRandomTweetSchedule().length) {
+                initializeRandomSchedule();
+            }
+            
+            // Load trends once at startup
+            loadTrends();
+            
+            // Initialize timers
+            updateTimers();
+            setInterval(updateTimers, 1000);
+            
+            // Initialize random tweet schedule and update every second
+            updateRandomTweetSchedule();
+            setInterval(updateRandomTweetSchedule, 1000);
+            
+            // Initialize pause state
+            setPaused(isPaused());
+        });
 
         // Add pause state management
         function isPaused() {
@@ -420,287 +817,259 @@
             }
         }
 
-        // Store intervals in a global object so we can clear them
-        const intervals = {
-            timers: null,
-            randomSchedule: null,
-            pageRefresh: null
-        };
-
-        function stopAllIntervals() {
-            Object.values(intervals).forEach(interval => {
-                if (interval) clearInterval(interval);
-            });
+        // Store random tweet schedule in localStorage
+        function setRandomTweetSchedule(schedule) {
+            localStorage.setItem('randomTweetSchedule', JSON.stringify(schedule));
         }
 
-        function startAllIntervals() {
-            if (!isPaused()) {
-                // Main timer update
-                intervals.timers = setInterval(updateTimers, 1000);
-                // Random schedule update
-                intervals.randomSchedule = setInterval(updateRandomTweetSchedule, 60000);
-                // Page refresh
-                intervals.pageRefresh = setInterval(() => {
-                    if (!isPaused()) window.location.reload();
-                }, 15000);
+        function getRandomTweetSchedule() {
+            try {
+                const stored = localStorage.getItem('randomTweetSchedule');
+                return stored ? JSON.parse(stored) : [];
+            } catch (error) {
+                console.error('Error parsing random tweet schedule:', error);
+                return [];
             }
         }
 
-        function togglePause() {
-            const paused = !isPaused();
-            setPaused(paused);
-            
-            const statusDiv = document.getElementById('statusMessage');
-            statusDiv.className = 'mb-4 p-4 rounded';
-            statusDiv.classList.remove('hidden');
-            
-            if (paused) {
-                stopAllIntervals();
-                statusDiv.classList.add('bg-yellow-100', 'text-yellow-800');
-                statusDiv.textContent = 'Bot paused. All timers and tweet generation stopped.';
-            } else {
-                // When resuming, don't immediately trigger tweets
-                startAllIntervals();
-                statusDiv.classList.add('bg-green-100', 'text-green-800');
-                statusDiv.textContent = 'Bot resumed. Normal scheduling restored.';
-                updateTimers();
-                updateRandomTweetSchedule();
-            }
-        }
-
-        function resetSequence() {
-            const statusDiv = document.getElementById('statusMessage');
-            statusDiv.className = 'mb-4 p-4 rounded';
-            statusDiv.classList.remove('hidden');
-            statusDiv.classList.add('bg-blue-100', 'text-blue-800');
-            statusDiv.textContent = 'Resetting all timers and schedules...';
-
-            // Stop all intervals first
-            stopAllIntervals();
-
-            // Clear all localStorage data
-            localStorage.clear();
-
-            // Reset pause state
-            setPaused(false);
-
-            // Force refresh to restart everything
-            setTimeout(() => window.location.reload(), 1000);
-        }
-
-        function canTweetNow() {
-            const lastTweetTime = localStorage.getItem('lastTweetTime');
-            if (!lastTweetTime) return true;
-            
-            const now = Date.now();
-            const timeSinceLastTweet = now - parseInt(lastTweetTime);
-            const minInterval = 45 * 60 * 1000; // 45 minutes in milliseconds
-            
-            return timeSinceLastTweet >= minInterval;
-        }
-
-        function updateTimers() {
+        // Initialize random tweet schedule if not exists or if all tweets are posted
+        function initializeRandomSchedule() {
             const now = new Date();
-            const currentIndex = getCurrentCountryIndex();
-            const lastPostTime = getLastPostTime();
-            const startTime = getStartTime();
-
-            // First time initialization
-            if (!startTime || !getLastTrendRefresh()) {
-                console.log('🎬 First time initialization - resetting sequence');
-                resetCountrySequence();
-                return;
-            }
-
-            // If paused, show paused status instead of countdown
-            if (isPaused()) {
-                countrySchedule.forEach((country) => {
-                    const timerElement = document.getElementById(`${country.id}Timer`);
-                    const countryCard = timerElement.parentElement;
-                    
-                    if (country.id === countrySchedule[currentIndex].id) {
-                        countryCard.classList.add('border-2', 'border-yellow-500', 'bg-yellow-50');
-                        timerElement.textContent = 'PAUSED';
-                    } else {
-                        countryCard.classList.remove('border-2', 'border-green-500', 'bg-green-50');
-                        countryCard.classList.add('bg-gray-50');
-                        timerElement.textContent = 'Waiting (Paused)';
-                    }
-                });
-                return;
-            }
-
-            // Check if we can tweet now
-            if (!canTweetNow()) {
-                const lastTweetTime = parseInt(localStorage.getItem('lastTweetTime'));
-                const waitTime = Math.ceil((lastTweetTime + (45 * 60 * 1000) - now.getTime()) / 1000);
+            const schedule = [];
+            const usedHours = new Set();
+            
+            // Generate 6 random times within the next 24 hours
+            // Ensure at least 2 hours between tweets
+            for (let i = 0; i < 6; i++) {
+                let hour;
+                do {
+                    hour = Math.floor(Math.random() * 24);
+                } while (usedHours.has(hour) || 
+                        Array.from(usedHours).some(h => Math.abs(h - hour) < 2));
                 
-                countrySchedule.forEach((country) => {
-                    const timerElement = document.getElementById(`${country.id}Timer`);
-                    if (country.id === countrySchedule[currentIndex].id) {
-                        timerElement.textContent = `Wait ${formatTime(waitTime)}`;
-                    }
-                });
-                return;
-            }
-
-            // Original timer update logic
-            const timeSinceStart = now.getTime() - parseInt(startTime);
-            const hourInterval = 60 * 60 * 1000;
-
-            countrySchedule.forEach((country, index) => {
-                const timerElement = document.getElementById(`${country.id}Timer`);
-                const countryCard = timerElement.parentElement;
+                usedHours.add(hour);
                 
-                if (index === currentIndex) {
-                    const nextPostTime = parseInt(lastPostTime) + hourInterval;
-                    const remainingMs = Math.max(0, nextPostTime - now.getTime());
-                    const remainingSecs = Math.ceil(remainingMs / 1000);
+                const time = new Date(now);
+                time.setHours(hour);
+                time.setMinutes(Math.floor(Math.random() * 60));
+                time.setSeconds(0);
+                time.setMilliseconds(0);
+                
+                // If the time has already passed today, schedule for tomorrow
+                if (time < now) {
+                    time.setDate(time.getDate() + 1);
+                }
+                
+                schedule.push({
+                    time: time.getTime(),
+                    posted: false,
+                    scheduledTime: time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                });
+            }
+            
+            // Sort by time and store
+            const sortedSchedule = schedule.sort((a, b) => a.time - b.time);
+            setRandomTweetSchedule(sortedSchedule);
+            return sortedSchedule;
+        }
 
-                    timerElement.textContent = formatTime(remainingSecs);
-                    countryCard.classList.add('border-2', 'border-green-500');
-                    countryCard.classList.add('bg-green-50');
+        // Check if all tweets are posted and need rescheduling
+        function checkAndRescheduleIfNeeded() {
+            const schedule = getRandomTweetSchedule();
+            if (!schedule.length || schedule.every(tweet => tweet.posted)) {
+                console.log('All tweets posted or no schedule exists, generating new schedule');
+                return initializeRandomSchedule();
+            }
+            return schedule;
+        }
 
-                    if (remainingSecs === 0 && !isPaused() && canTweetNow()) {
-                        console.log(`🎯 Generating tweet for ${country.name}`);
-                        generateTweet('trend').then(() => {
-                            setTimeout(() => {
-                                const nextIndex = (currentIndex + 1) % countrySchedule.length;
-                                console.log(`⏭️ Moving to next country: ${countrySchedule[nextIndex].name}`);
-                                
-                                if (nextIndex === 0) {
-                                    console.log('🔄 Full cycle completed - refreshing trends and resetting sequence');
-                                    setStartTime(now.getTime());
-                                    refreshTrends();
-                                }
-                                
-                                setCurrentCountryIndex(nextIndex);
-                                setLastPostTime(now.getTime());
-                                window.location.reload();
-                            }, 2000);
-                        }).catch(error => {
-                            console.error('❌ Failed to generate tweet:', error);
-                        });
-                    }
+        function updateRandomTweetSchedule() {
+            let schedule = checkAndRescheduleIfNeeded();
+            const container = document.getElementById('randomTweetSchedule');
+            const now = new Date();
+            
+            container.innerHTML = '';
+            
+            schedule.forEach((tweet, index) => {
+                const div = document.createElement('div');
+                div.className = 'text-center p-4 rounded-lg';
+                
+                if (tweet.posted) {
+                    // Tweet has been posted
+                    div.classList.add('bg-green-50', 'border', 'border-green-500');
+                    div.innerHTML = `
+                        <div class="font-semibold mb-2">Random ${index + 1}</div>
+                        <div class="text-green-600 font-semibold">Posted</div>
+                        <div class="text-xs text-gray-500 mt-1">${tweet.scheduledTime}</div>
+                    `;
                 } else {
-                    const position = (index - currentIndex + countrySchedule.length) % countrySchedule.length;
-                    countryCard.classList.remove('border-2', 'border-green-500', 'bg-green-50');
-                    countryCard.classList.add('bg-gray-50');
+                    // Tweet is pending
+                    const tweetTime = new Date(tweet.time);
                     
-                    if (position === 0) {
-                        timerElement.textContent = "Next in queue";
+                    if (tweetTime < now) {
+                        // Mark as posted if the time has passed
+                        schedule[index].posted = true;
+                        setRandomTweetSchedule(schedule);
+                        
+                        // Call backend to post the tweet
+                        axios.post('/api/generate/random')
+                            .then(response => {
+                                console.log('Random tweet posted successfully');
+                            })
+                            .catch(error => {
+                                console.error('Failed to post random tweet:', error);
+                            });
+                        
+                        div.classList.add('bg-green-50', 'border', 'border-green-500');
+                        div.innerHTML = `
+                            <div class="font-semibold mb-2">Random ${index + 1}</div>
+                            <div class="text-green-600 font-semibold">Just Posted</div>
+                            <div class="text-xs text-gray-500 mt-1">${tweet.scheduledTime}</div>
+                        `;
                     } else {
-                        timerElement.textContent = `Waiting (${position} in queue)`;
+                        // Show countdown
+                        const remainingTime = tweetTime.getTime() - now.getTime();
+                        const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+                        const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+                        
+                        div.classList.add('bg-gray-50');
+                        div.innerHTML = `
+                            <div class="font-semibold mb-2">Random ${index + 1}</div>
+                            <div class="text-lg font-mono">${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}</div>
+                            <div class="text-xs text-gray-500 mt-1">${tweet.scheduledTime}</div>
+                        `;
                     }
                 }
+                
+                container.appendChild(div);
             });
         }
 
-        function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        }
-
-        async function generateTweet(type) {
-            const statusDiv = document.getElementById('statusMessage');
-            statusDiv.className = 'mb-4 p-4 rounded';
-            statusDiv.classList.remove('hidden');
-            
+        async function generateTrendingTweet() {
             try {
-                statusDiv.classList.add('bg-yellow-100', 'text-yellow-800');
-                statusDiv.textContent = 'Generating tweet...';
-                
-                const response = await axios.post(`/dashboard/generate/${type}`);
+                const statusDiv = document.getElementById('statusMessage');
+                statusDiv.className = 'mb-4 p-4 rounded';
+                statusDiv.classList.remove('hidden');
+                statusDiv.classList.add('bg-blue-100', 'text-blue-800');
+                statusDiv.textContent = 'Generating random tweet...';
+
+                const button = document.getElementById('generateTweetButton');
+                button.disabled = true;
+                button.classList.add('opacity-50', 'cursor-not-allowed');
+
+                const response = await axios.post('/api/generate/random');
                 
                 if (response.data.success) {
-                    statusDiv.classList.remove('bg-yellow-100', 'text-yellow-800');
+                    statusDiv.classList.remove('bg-blue-100', 'text-blue-800');
                     statusDiv.classList.add('bg-green-100', 'text-green-800');
-                    statusDiv.textContent = response.data.message || 'Tweet generated successfully! Refreshing...';
+                    statusDiv.textContent = response.data.message || 'Tweet generated successfully!';
                     
-                    // Store the last tweet time
-                    localStorage.setItem('lastTweetTime', Date.now().toString());
-                    
-                    setTimeout(() => window.location.reload(), 2000);
+                    // Refresh the page after 2 seconds to show the new tweet
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
                 } else {
                     throw new Error(response.data.message || 'Failed to generate tweet');
                 }
             } catch (error) {
-                statusDiv.classList.remove('bg-yellow-100', 'text-yellow-800');
-                statusDiv.classList.add('bg-red-100', 'text-red-800');
-                statusDiv.textContent = 'Error generating tweet: ' + (error.response?.data?.message || error.message);
+                const statusDiv = document.getElementById('statusMessage');
+                statusDiv.className = 'mb-4 p-4 rounded bg-red-100 text-red-800';
+                statusDiv.classList.remove('hidden');
+                statusDiv.textContent = 'Failed to generate tweet: ' + (error.response?.data?.message || error.message);
+            } finally {
+                // Re-enable the button after 1 minute
+                setTimeout(() => {
+                    const button = document.getElementById('generateTweetButton');
+                    button.disabled = false;
+                    button.classList.remove('opacity-50', 'cursor-not-allowed');
+                }, 60000);
             }
         }
 
-        // Initialize on page load
-        if (!getStartTime()) {
-            resetSequence();
-        }
-
-        // Start all intervals if not paused
-        if (!isPaused()) {
-            startAllIntervals();
-        }
-
-        // Initial updates
-        updateTimers();
-        refreshTrends();
-        updateRandomTweetSchedule();
-
-        // Initialize pause state on page load
-        setPaused(isPaused());
-
-        // Store random tweet schedule in localStorage
-        function setRandomTweetSchedule(times) {
-            localStorage.setItem('randomTweetSchedule', JSON.stringify(times));
-        }
-
-        function getRandomTweetSchedule() {
-            const stored = localStorage.getItem('randomTweetSchedule');
-            return stored ? JSON.parse(stored) : [];
-        }
-
-        // Initialize random tweet schedule if not exists
-        if (!getRandomTweetSchedule().length) {
-            const now = new Date();
-            const schedule = [];
-            for (let i = 0; i < 6; i++) {
-                const time = new Date(now);
-                time.setHours(Math.floor(Math.random() * 24));
-                time.setMinutes(Math.floor(Math.random() * 60));
-                schedule.push(time.getTime());
-            }
-            setRandomTweetSchedule(schedule.sort((a, b) => a - b));
-        }
-
-        function updateRandomTweetSchedule() {
-            const schedule = getRandomTweetSchedule();
-            const container = document.getElementById('randomTweetSchedule');
-            container.innerHTML = '';
+        // Add test mode functions
+        async function enableTestMode() {
+            const statusDiv = document.getElementById('statusMessage');
+            const testButton = document.getElementById('testModeButton');
             
-            schedule.forEach((time, index) => {
-                const timeDate = new Date(time);
+            try {
                 const now = new Date();
-                let remainingTime;
+                const currentStartTime = getStartTime();
                 
-                if (timeDate < now) {
-                    // Move to next day
-                    timeDate.setDate(timeDate.getDate() + 1);
+                if (!currentStartTime) {
+                    throw new Error('No active sequence');
+                }
+
+                // Set new start time to 30 seconds from now
+                const newStartTime = now.getTime() + 30000; // 30 seconds
+                setStartTime(newStartTime);
+                
+                // Update button state
+                testButton.textContent = 'Test Mode Active';
+                testButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                testButton.classList.add('bg-orange-500', 'hover:bg-orange-600');
+                testButton.disabled = true;
+                
+                // Show status message
+                statusDiv.className = 'mb-4 p-4 rounded bg-orange-100 text-orange-800';
+                statusDiv.classList.remove('hidden');
+                statusDiv.textContent = 'Test mode activated: Current timer reduced to 30 seconds';
+
+                // Generate initial tweet for current country
+                try {
+                    const response = await axios.post('/api/generate/trend');
+                    if (!response.data.success) {
+                        throw new Error(response.data.message || 'Failed to generate tweet');
+                    }
+                } catch (error) {
+                    console.error('Failed to generate initial test tweet:', error);
                 }
                 
-                remainingTime = timeDate.getTime() - now.getTime();
-                const hours = Math.floor(remainingTime / (1000 * 60 * 60));
-                const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                // Set timer for the next tweet after 30 seconds
+                setTimeout(async () => {
+                    try {
+                        // Generate the next tweet
+                        const response = await axios.post('/api/generate/trend');
+                        if (!response.data.success) {
+                            throw new Error(response.data.message || 'Failed to generate tweet');
+                        }
+                        
+                        // Reset button state
+                        testButton.textContent = 'Enable 30s Test';
+                        testButton.classList.remove('bg-orange-500', 'hover:bg-orange-600');
+                        testButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                        testButton.disabled = false;
+                        
+                        // Show success message
+                        statusDiv.className = 'mb-4 p-4 rounded bg-green-100 text-green-800';
+                        statusDiv.textContent = 'Test mode completed successfully';
+                        
+                        // Refresh the page after a short delay
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } catch (error) {
+                        console.error('Failed to generate test tweet:', error);
+                        statusDiv.className = 'mb-4 p-4 rounded bg-red-100 text-red-800';
+                        statusDiv.textContent = 'Failed to generate test tweet: ' + error.message;
+                    }
+                }, 30000);
                 
-                const div = document.createElement('div');
-                div.className = 'text-center p-4 rounded-lg bg-gray-50';
-                div.innerHTML = `
-                    <div class="font-semibold mb-2">Random ${index + 1}</div>
-                    <div class="text-lg font-mono">${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}</div>
-                `;
-                container.appendChild(div);
-            });
+                // Hide initial status message after 3 seconds
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                }, 3000);
+                
+            } catch (error) {
+                // Show error message
+                statusDiv.className = 'mb-4 p-4 rounded bg-red-100 text-red-800';
+                statusDiv.classList.remove('hidden');
+                statusDiv.textContent = 'Failed to enable test mode: ' + error.message;
+                
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                }, 3000);
+            }
         }
     </script>
 </body>
