@@ -1,6 +1,6 @@
 # Tweety - AI-Powered Twitter Bot Dashboard
 
-PersonalTweety is an advanced Twitter bot that automatically generates and posts engaging content about backend development, programming tips, and trending topics. It features a secure dashboard for monitoring and controlling tweet generation.
+Tweety is an advanced Twitter bot that automatically generates and posts engaging content about backend development, programming tips, and trending topics. It features a secure dashboard for monitoring and controlling tweet generation.
 
 ## Features
 
