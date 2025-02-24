@@ -1,8 +1,8 @@
 {
   "name": "ai-twitter-x-bot",
   "version": "0.0.1",
-  "description": "AI-Twitter-X-Bot is a Twitter bot designed to post insightful backend development tips, facts, and jokes to keep developers informed and entertained.",
-  "author": "Anthony Nwobodo",
+  "description": "Tweety. Automate your Twitter.",
+  "author": "syedbilalalam",
   "private": true,
   "license": "MIT",
   "scripts": {
