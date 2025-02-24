@@ -139,23 +139,75 @@
         .space-x-4 > * + * {
             margin-left: 1rem;
         }
+
+        .brand-header {
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            color: white;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .brand-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .brand-link {
+            color: #64b5f6;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .brand-link:hover {
+            color: #90caf9;
+            text-decoration: underline;
+        }
+
+        .brand-subtitle {
+            color: #bbdefb;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
-    <div class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold">Twitter Bot Dashboard</h1>
-            <div class="flex gap-4">
-                <button id="pauseButton" onclick="togglePause()" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
-                    Pause
-                </button>
-                <button id="resetButton" onclick="resetSequence()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
-                    Reset
-                </button>
-                <a href="/auth/logout" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors">
-                    Logout
-                </a>
+    <!-- Brand Header -->
+    <div class="brand-header">
+        <div class="brand-container">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold">PersonalTweety Dashboard</h1>
+                    <p class="brand-subtitle">
+                        Created by <a href="https://bilalsworld.onrender.com/" target="_blank" class="brand-link">Syed Bilal Alam</a>
+                    </p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="https://bilalsworld.onrender.com/" target="_blank" 
+                       class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                        Portfolio
+                    </a>
+                    <a href="/auth/logout" 
+                       class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
+                        Logout
+                    </a>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Control Buttons -->
+        <div class="flex justify-end gap-4 mb-8">
+            <button id="pauseButton" onclick="togglePause()" 
+                    class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
+                Pause
+            </button>
+            <button id="resetButton" onclick="resetSequence()" 
+                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                Reset
+            </button>
         </div>
 
         <!-- Next Tweet Timers -->
@@ -318,24 +370,30 @@
 
         async function refreshTrends() {
             try {
+                console.log('🔄 Refreshing trends from RapidAPI...');
                 const response = await axios.get('/api/trends');
                 const trends = response.data;
+                
+                console.log('📊 New trends fetched:', trends);
                 
                 countrySchedule.forEach(country => {
                     const trend = trends[country.id];
                     const trendElement = document.getElementById(`${country.id}Trend`);
                     if (trend) {
+                        console.log(`✅ ${country.name}: New trend - "${trend.name}"`);
                         trendElement.textContent = trend.name;
                         trendElement.classList.add('animate-pulse');
                         setTimeout(() => trendElement.classList.remove('animate-pulse'), 2000);
                     } else {
+                        console.warn(`⚠️ ${country.name}: Failed to fetch trend`);
                         trendElement.textContent = 'Failed to fetch trend';
                     }
                 });
 
                 setLastTrendRefresh(Date.now());
+                console.log('✨ Trend refresh cycle completed');
             } catch (error) {
-                console.error('Failed to refresh trends:', error);
+                console.error('❌ Failed to refresh trends:', error);
                 countrySchedule.forEach(country => {
                     const trendElement = document.getElementById(`${country.id}Trend`);
                     trendElement.textContent = 'Error fetching trends';
@@ -401,9 +459,10 @@
                 statusDiv.classList.add('bg-yellow-100', 'text-yellow-800');
                 statusDiv.textContent = 'Bot paused. All timers and tweet generation stopped.';
             } else {
+                // When resuming, don't immediately trigger tweets
                 startAllIntervals();
                 statusDiv.classList.add('bg-green-100', 'text-green-800');
-                statusDiv.textContent = 'Bot resumed. Timers and tweet generation restarted.';
+                statusDiv.textContent = 'Bot resumed. Normal scheduling restored.';
                 updateTimers();
                 updateRandomTweetSchedule();
             }
@@ -429,7 +488,17 @@
             setTimeout(() => window.location.reload(), 1000);
         }
 
-        // Modify updateTimers to respect pause state
+        function canTweetNow() {
+            const lastTweetTime = localStorage.getItem('lastTweetTime');
+            if (!lastTweetTime) return true;
+            
+            const now = Date.now();
+            const timeSinceLastTweet = now - parseInt(lastTweetTime);
+            const minInterval = 45 * 60 * 1000; // 45 minutes in milliseconds
+            
+            return timeSinceLastTweet >= minInterval;
+        }
+
         function updateTimers() {
             const now = new Date();
             const currentIndex = getCurrentCountryIndex();
@@ -438,6 +507,7 @@
 
             // First time initialization
             if (!startTime || !getLastTrendRefresh()) {
+                console.log('🎬 First time initialization - resetting sequence');
                 resetCountrySequence();
                 return;
             }
@@ -460,6 +530,20 @@
                 return;
             }
 
+            // Check if we can tweet now
+            if (!canTweetNow()) {
+                const lastTweetTime = parseInt(localStorage.getItem('lastTweetTime'));
+                const waitTime = Math.ceil((lastTweetTime + (45 * 60 * 1000) - now.getTime()) / 1000);
+                
+                countrySchedule.forEach((country) => {
+                    const timerElement = document.getElementById(`${country.id}Timer`);
+                    if (country.id === countrySchedule[currentIndex].id) {
+                        timerElement.textContent = `Wait ${formatTime(waitTime)}`;
+                    }
+                });
+                return;
+            }
+
             // Original timer update logic
             const timeSinceStart = now.getTime() - parseInt(startTime);
             const hourInterval = 60 * 60 * 1000;
@@ -477,22 +561,25 @@
                     countryCard.classList.add('border-2', 'border-green-500');
                     countryCard.classList.add('bg-green-50');
 
-                    if (remainingSecs === 0 && !isPaused()) {
+                    if (remainingSecs === 0 && !isPaused() && canTweetNow()) {
+                        console.log(`🎯 Generating tweet for ${country.name}`);
                         generateTweet('trend').then(() => {
                             setTimeout(() => {
                                 const nextIndex = (currentIndex + 1) % countrySchedule.length;
-                                setCurrentCountryIndex(nextIndex);
-                                setLastPostTime(now.getTime());
-
+                                console.log(`⏭️ Moving to next country: ${countrySchedule[nextIndex].name}`);
+                                
                                 if (nextIndex === 0) {
+                                    console.log('🔄 Full cycle completed - refreshing trends and resetting sequence');
                                     setStartTime(now.getTime());
                                     refreshTrends();
                                 }
                                 
+                                setCurrentCountryIndex(nextIndex);
+                                setLastPostTime(now.getTime());
                                 window.location.reload();
                             }, 2000);
                         }).catch(error => {
-                            console.error('Failed to generate tweet:', error);
+                            console.error('❌ Failed to generate tweet:', error);
                         });
                     }
                 } else {
@@ -531,6 +618,10 @@
                     statusDiv.classList.remove('bg-yellow-100', 'text-yellow-800');
                     statusDiv.classList.add('bg-green-100', 'text-green-800');
                     statusDiv.textContent = response.data.message || 'Tweet generated successfully! Refreshing...';
+                    
+                    // Store the last tweet time
+                    localStorage.setItem('lastTweetTime', Date.now().toString());
+                    
                     setTimeout(() => window.location.reload(), 2000);
                 } else {
                     throw new Error(response.data.message || 'Failed to generate tweet');
