@@ -1,9 +1,0 @@
-tweepy==4.14.0
-python-dotenv==1.0.0
-requests==2.31.0
-schedule==1.2.1
-python-json-logger==2.0.7
-colorama==0.4.6  # For colored console output
-tqdm==4.66.1  # For progress bars
-flask==3.0.2  # For web dashboard
-beautifulsoup4==4.12.2  # For parsing cricket data 
