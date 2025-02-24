@@ -2,7 +2,7 @@
 
 Tweety is an advanced Twitter bot that automatically generates and posts engaging content about backend development, programming tips, and trending topics. It features a secure dashboard for monitoring and controlling tweet generation.
 
-![Image](https://github.com/user-attachments/assets/eae3e56c-91d9-4694-a240-80d16a8a9e6a)
+![Image](https://github.com/user-attachments/assets/0ca9a05f-fef9-46d3-afad-526a6768af23)
 
 ## Features
 
