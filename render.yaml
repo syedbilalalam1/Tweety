@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: twtti
+    env: node
+    region: frankfurt  # Choose your preferred region
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /dashboard
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: TWITTER_CLIENT_ID
+        sync: false
+      - key: TWITTER_CLIENT_SECRET
+        sync: false
+      - key: TWITTER_BEARER_TOKEN
+        sync: false
+      - key: TWITTER_ACCESS_TOKEN
+        sync: false
+      - key: TWITTER_ACCESS_TOKEN_SECRET
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: RAPIDAPI_KEY
+        sync: false
+    autoDeploy: true
+    plan: free 

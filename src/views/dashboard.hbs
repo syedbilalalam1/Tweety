@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8">Twitter Bot Dashboard</h1>
+        
+        <div class="grid grid-cols-1 gap-6">
+            {{#each tweets}}
+            <div class="bg-white rounded-lg shadow p-6 {{#if (eq status 'failed')}}border-l-4 border-red-500{{else}}border-l-4 border-green-500{{/if}}">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="text-sm text-gray-500">{{timestamp}}</span>
+                    <span class="px-2 py-1 text-sm rounded {{#if (eq status 'failed')}}bg-red-100 text-red-800{{else}}bg-green-100 text-green-800{{/if}}">
+                        {{status}}
+                    </span>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold mb-2">Tweet Content</h3>
+                    <pre class="bg-gray-50 p-4 rounded whitespace-pre-wrap">{{content}}</pre>
+                </div>
+
+                {{#if error}}
+                <div class="mt-4 p-4 bg-red-50 rounded">
+                    <h4 class="text-red-800 font-semibold">Error</h4>
+                    <p class="text-red-600">{{error}}</p>
+                </div>
+                {{/if}}
+
+                <div class="mt-4">
+                    <span class="px-2 py-1 text-sm bg-blue-100 text-blue-800 rounded">
+                        {{type}}
+                    </span>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh the page every minute
+        setTimeout(() => {
+            window.location.reload();
+        }, 60000);
+    </script>
+</body>
+</html> 

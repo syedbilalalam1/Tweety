@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <!-- Remove integrity check and use a different CDN -->
+    <link href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- Enhanced base styles -->
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .button-fallback {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            margin: 0.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .pause-button { 
+            background-color: #EAB308; 
+            color: white;
+            border: 2px solid #CA8A04;
+        }
+        .pause-button:hover { 
+            background-color: #CA8A04; 
+        }
+
+        .reset-button { 
+            background-color: #EF4444; 
+            color: white;
+            border: 2px solid #DC2626;
+        }
+        .reset-button:hover { 
+            background-color: #DC2626; 
+        }
+
+        .generate-button { 
+            background-color: #8B5CF6; 
+            color: white;
+            border: 2px solid #7C3AED;
+        }
+        .generate-button:hover { 
+            background-color: #7C3AED; 
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .grid-cols-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .grid-cols-6 {
+            grid-template-columns: repeat(6, 1fr);
+        }
+
+        .timer-card {
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .timer-value {
+            font-family: monospace;
+            font-size: 1.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-success {
+            background-color: #ecfdf5;
+            color: #065f46;
+        }
+
+        .status-error {
+            background-color: #fef2f2;
+            color: #991b1b;
+        }
+
+        .status-warning {
+            background-color: #fffbeb;
+            color: #92400e;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .text-3xl {
+            font-size: 1.875rem;
+            line-height: 2.25rem;
+        }
+
+        .mb-8 {
+            margin-bottom: 2rem;
+        }
+
+        .space-x-4 > * + * {
+            margin-left: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold">Twitter Bot Dashboard</h1>
+            <div class="flex gap-4">
+                <button id="pauseButton" onclick="togglePause()" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
+                    Pause
+                </button>
+                <button id="resetButton" onclick="resetSequence()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                    Reset
+                </button>
+                <a href="/auth/logout" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors">
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Next Tweet Timers -->
+        <div class="grid grid-cols-1 gap-6 mb-8">
+            <!-- Trending Tweet Schedule -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Next Trending Tweet Schedule</h2>
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="text-center p-4 rounded-lg bg-gray-50">
+                        <div class="font-semibold mb-2">Pakistan</div>
+                        <div id="pakistanTimer" class="text-lg font-mono">--:--:--</div>
+                    </div>
+                    <div class="text-center p-4 rounded-lg bg-gray-50">
+                        <div class="font-semibold mb-2">United Kingdom</div>
+                        <div id="ukTimer" class="text-lg font-mono">--:--:--</div>
+                    </div>
+                    <div class="text-center p-4 rounded-lg bg-gray-50">
+                        <div class="font-semibold mb-2">India</div>
+                        <div id="indiaTimer" class="text-lg font-mono">--:--:--</div>
+                    </div>
+                    <div class="text-center p-4 rounded-lg bg-gray-50">
+                        <div class="font-semibold mb-2">United States</div>
+                        <div id="usaTimer" class="text-lg font-mono">--:--:--</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Random Tweet Schedule -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Random Tweet Schedule (6 per day)</h2>
+                <div class="grid grid-cols-6 gap-4" id="randomTweetSchedule">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Trending Topics -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Current Trending Topics</h2>
+            <div class="grid grid-cols-4 gap-4" id="trendingTopics">
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">Pakistan</h3>
+                    <div id="pakistanTrend" class="text-sm">Loading...</div>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">United Kingdom</h3>
+                    <div id="ukTrend" class="text-sm">Loading...</div>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">India</h3>
+                    <div id="indiaTrend" class="text-sm">Loading...</div>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold mb-2">United States</h3>
+                    <div id="usaTrend" class="text-sm">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Messages -->
+        <div id="statusMessage" class="hidden mb-4 p-4 rounded"></div>
+        
+        <!-- Tweet History -->
+        <div class="grid grid-cols-1 gap-6">
+            {{#if tweets.length}}
+                {{#each tweets}}
+                <div class="bg-white rounded-lg shadow p-6 {{#if (eq status 'failed')}}border-l-4 border-red-500{{else}}border-l-4 border-green-500{{/if}}">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-sm text-gray-500">{{timestamp}}</span>
+                            {{#if country}}
+                            <span class="ml-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">{{country}}</span>
+                            {{/if}}
+                        </div>
+                        <span class="px-2 py-1 text-sm rounded {{#if (eq status 'failed')}}bg-red-100 text-red-800{{else}}bg-green-100 text-green-800{{/if}}">
+                            {{status}}
+                        </span>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h3 class="text-lg font-semibold mb-2">Tweet Content</h3>
+                        <pre class="bg-gray-50 p-4 rounded whitespace-pre-wrap">{{content}}</pre>
+                    </div>
+
+                    {{#if error}}
+                    <div class="mt-4 p-4 bg-red-50 rounded">
+                        <h4 class="text-red-800 font-semibold">Error</h4>
+                        <p class="text-red-600">{{error}}</p>
+                    </div>
+                    {{/if}}
+
+                    <div class="mt-4 flex gap-2">
+                        <span class="px-2 py-1 text-sm bg-blue-100 text-blue-800 rounded">
+                            {{type}}
+                        </span>
+                        {{#if hashtag}}
+                        <span class="px-2 py-1 text-sm bg-purple-100 text-purple-800 rounded">
+                            {{hashtag}}
+                        </span>
+                        {{/if}}
+                    </div>
+                </div>
+                {{/each}}
+            {{else}}
+                <div class="bg-white rounded-lg shadow p-6 text-center">
+                    <p class="text-gray-500">No tweets generated yet. Use the buttons above to generate tweets or wait for the scheduled generation.</p>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+
+    <script>
+        const countrySchedule = [
+            { name: 'Pakistan', id: 'pakistan' },
+            { name: 'United States', id: 'usa' },
+            { name: 'India', id: 'india' },
+            { name: 'United Kingdom', id: 'uk' }
+        ];
+
+        // Store the current active country index and state in localStorage
+        function getCurrentCountryIndex() {
+            const stored = localStorage.getItem('currentCountryIndex');
+            return stored ? parseInt(stored) : 0;
+        }
+
+        function setCurrentCountryIndex(index) {
+            localStorage.setItem('currentCountryIndex', index.toString());
+        }
+
+        function getLastPostTime() {
+            return localStorage.getItem('lastPostTime');
+        }
+
+        function setLastPostTime(time) {
+            localStorage.setItem('lastPostTime', time.toString());
+        }
+
+        function getStartTime() {
+            return localStorage.getItem('startTime');
+        }
+
+        function setStartTime(time) {
+            localStorage.setItem('startTime', time.toString());
+        }
+
+        function getLastTrendRefresh() {
+            return localStorage.getItem('lastTrendRefresh');
+        }
+
+        function setLastTrendRefresh(time) {
+            localStorage.setItem('lastTrendRefresh', time.toString());
+        }
+
+        function resetCountrySequence() {
+            setCurrentCountryIndex(0);
+            setLastPostTime(Date.now());
+            setStartTime(Date.now());
+            refreshTrends();
+        }
+
+        async function refreshTrends() {
+            try {
+                const response = await axios.get('/api/trends');
+                const trends = response.data;
+                
+                countrySchedule.forEach(country => {
+                    const trend = trends[country.id];
+                    const trendElement = document.getElementById(`${country.id}Trend`);
+                    if (trend) {
+                        trendElement.textContent = trend.name;
+                        trendElement.classList.add('animate-pulse');
+                        setTimeout(() => trendElement.classList.remove('animate-pulse'), 2000);
+                    } else {
+                        trendElement.textContent = 'Failed to fetch trend';
+                    }
+                });
+
+                setLastTrendRefresh(Date.now());
+            } catch (error) {
+                console.error('Failed to refresh trends:', error);
+                countrySchedule.forEach(country => {
+                    const trendElement = document.getElementById(`${country.id}Trend`);
+                    trendElement.textContent = 'Error fetching trends';
+                });
+            }
+        }
+
+        // Add pause state management
+        function isPaused() {
+            return localStorage.getItem('isPaused') === 'true';
+        }
+
+        function setPaused(paused) {
+            localStorage.setItem('isPaused', paused);
+            const pauseButton = document.getElementById('pauseButton');
+            if (paused) {
+                pauseButton.textContent = 'Resume';
+                pauseButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                pauseButton.classList.add('bg-green-500', 'hover:bg-green-600');
+            } else {
+                pauseButton.textContent = 'Pause';
+                pauseButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                pauseButton.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+            }
+        }
+
+        // Store intervals in a global object so we can clear them
+        const intervals = {
+            timers: null,
+            randomSchedule: null,
+            pageRefresh: null
+        };
+
+        function stopAllIntervals() {
+            Object.values(intervals).forEach(interval => {
+                if (interval) clearInterval(interval);
+            });
+        }
+
+        function startAllIntervals() {
+            if (!isPaused()) {
+                // Main timer update
+                intervals.timers = setInterval(updateTimers, 1000);
+                // Random schedule update
+                intervals.randomSchedule = setInterval(updateRandomTweetSchedule, 60000);
+                // Page refresh
+                intervals.pageRefresh = setInterval(() => {
+                    if (!isPaused()) window.location.reload();
+                }, 15000);
+            }
+        }
+
+        function togglePause() {
+            const paused = !isPaused();
+            setPaused(paused);
+            
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.className = 'mb-4 p-4 rounded';
+            statusDiv.classList.remove('hidden');
+            
+            if (paused) {
+                stopAllIntervals();
+                statusDiv.classList.add('bg-yellow-100', 'text-yellow-800');
+                statusDiv.textContent = 'Bot paused. All timers and tweet generation stopped.';
+            } else {
+                startAllIntervals();
+                statusDiv.classList.add('bg-green-100', 'text-green-800');
+                statusDiv.textContent = 'Bot resumed. Timers and tweet generation restarted.';
+                updateTimers();
+                updateRandomTweetSchedule();
+            }
+        }
+
+        function resetSequence() {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.className = 'mb-4 p-4 rounded';
+            statusDiv.classList.remove('hidden');
+            statusDiv.classList.add('bg-blue-100', 'text-blue-800');
+            statusDiv.textContent = 'Resetting all timers and schedules...';
+
+            // Stop all intervals first
+            stopAllIntervals();
+
+            // Clear all localStorage data
+            localStorage.clear();
+
+            // Reset pause state
+            setPaused(false);
+
+            // Force refresh to restart everything
+            setTimeout(() => window.location.reload(), 1000);
+        }
+
+        // Modify updateTimers to respect pause state
+        function updateTimers() {
+            const now = new Date();
+            const currentIndex = getCurrentCountryIndex();
+            const lastPostTime = getLastPostTime();
+            const startTime = getStartTime();
+
+            // First time initialization
+            if (!startTime || !getLastTrendRefresh()) {
+                resetCountrySequence();
+                return;
+            }
+
+            // If paused, show paused status instead of countdown
+            if (isPaused()) {
+                countrySchedule.forEach((country) => {
+                    const timerElement = document.getElementById(`${country.id}Timer`);
+                    const countryCard = timerElement.parentElement;
+                    
+                    if (country.id === countrySchedule[currentIndex].id) {
+                        countryCard.classList.add('border-2', 'border-yellow-500', 'bg-yellow-50');
+                        timerElement.textContent = 'PAUSED';
+                    } else {
+                        countryCard.classList.remove('border-2', 'border-green-500', 'bg-green-50');
+                        countryCard.classList.add('bg-gray-50');
+                        timerElement.textContent = 'Waiting (Paused)';
+                    }
+                });
+                return;
+            }
+
+            // Original timer update logic
+            const timeSinceStart = now.getTime() - parseInt(startTime);
+            const hourInterval = 60 * 60 * 1000;
+
+            countrySchedule.forEach((country, index) => {
+                const timerElement = document.getElementById(`${country.id}Timer`);
+                const countryCard = timerElement.parentElement;
+                
+                if (index === currentIndex) {
+                    const nextPostTime = parseInt(lastPostTime) + hourInterval;
+                    const remainingMs = Math.max(0, nextPostTime - now.getTime());
+                    const remainingSecs = Math.ceil(remainingMs / 1000);
+
+                    timerElement.textContent = formatTime(remainingSecs);
+                    countryCard.classList.add('border-2', 'border-green-500');
+                    countryCard.classList.add('bg-green-50');
+
+                    if (remainingSecs === 0 && !isPaused()) {
+                        generateTweet('trend').then(() => {
+                            setTimeout(() => {
+                                const nextIndex = (currentIndex + 1) % countrySchedule.length;
+                                setCurrentCountryIndex(nextIndex);
+                                setLastPostTime(now.getTime());
+
+                                if (nextIndex === 0) {
+                                    setStartTime(now.getTime());
+                                    refreshTrends();
+                                }
+                                
+                                window.location.reload();
+                            }, 2000);
+                        }).catch(error => {
+                            console.error('Failed to generate tweet:', error);
+                        });
+                    }
+                } else {
+                    const position = (index - currentIndex + countrySchedule.length) % countrySchedule.length;
+                    countryCard.classList.remove('border-2', 'border-green-500', 'bg-green-50');
+                    countryCard.classList.add('bg-gray-50');
+                    
+                    if (position === 0) {
+                        timerElement.textContent = "Next in queue";
+                    } else {
+                        timerElement.textContent = `Waiting (${position} in queue)`;
+                    }
+                }
+            });
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        async function generateTweet(type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.className = 'mb-4 p-4 rounded';
+            statusDiv.classList.remove('hidden');
+            
+            try {
+                statusDiv.classList.add('bg-yellow-100', 'text-yellow-800');
+                statusDiv.textContent = 'Generating tweet...';
+                
+                const response = await axios.post(`/dashboard/generate/${type}`);
+                
+                if (response.data.success) {
+                    statusDiv.classList.remove('bg-yellow-100', 'text-yellow-800');
+                    statusDiv.classList.add('bg-green-100', 'text-green-800');
+                    statusDiv.textContent = response.data.message || 'Tweet generated successfully! Refreshing...';
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    throw new Error(response.data.message || 'Failed to generate tweet');
+                }
+            } catch (error) {
+                statusDiv.classList.remove('bg-yellow-100', 'text-yellow-800');
+                statusDiv.classList.add('bg-red-100', 'text-red-800');
+                statusDiv.textContent = 'Error generating tweet: ' + (error.response?.data?.message || error.message);
+            }
+        }
+
+        // Initialize on page load
+        if (!getStartTime()) {
+            resetSequence();
+        }
+
+        // Start all intervals if not paused
+        if (!isPaused()) {
+            startAllIntervals();
+        }
+
+        // Initial updates
+        updateTimers();
+        refreshTrends();
+        updateRandomTweetSchedule();
+
+        // Initialize pause state on page load
+        setPaused(isPaused());
+
+        // Store random tweet schedule in localStorage
+        function setRandomTweetSchedule(times) {
+            localStorage.setItem('randomTweetSchedule', JSON.stringify(times));
+        }
+
+        function getRandomTweetSchedule() {
+            const stored = localStorage.getItem('randomTweetSchedule');
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        // Initialize random tweet schedule if not exists
+        if (!getRandomTweetSchedule().length) {
+            const now = new Date();
+            const schedule = [];
+            for (let i = 0; i < 6; i++) {
+                const time = new Date(now);
+                time.setHours(Math.floor(Math.random() * 24));
+                time.setMinutes(Math.floor(Math.random() * 60));
+                schedule.push(time.getTime());
+            }
+            setRandomTweetSchedule(schedule.sort((a, b) => a - b));
+        }
+
+        function updateRandomTweetSchedule() {
+            const schedule = getRandomTweetSchedule();
+            const container = document.getElementById('randomTweetSchedule');
+            container.innerHTML = '';
+            
+            schedule.forEach((time, index) => {
+                const timeDate = new Date(time);
+                const now = new Date();
+                let remainingTime;
+                
+                if (timeDate < now) {
+                    // Move to next day
+                    timeDate.setDate(timeDate.getDate() + 1);
+                }
+                
+                remainingTime = timeDate.getTime() - now.getTime();
+                const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+                const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                
+                const div = document.createElement('div');
+                div.className = 'text-center p-4 rounded-lg bg-gray-50';
+                div.innerHTML = `
+                    <div class="font-semibold mb-2">Random ${index + 1}</div>
+                    <div class="text-lg font-mono">${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html> 
