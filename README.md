@@ -92,6 +92,8 @@ The application uses several environment variables for configuration. Copy `.env
 - **Random Tweets**: 6 tweets per day (mix of code and text content)
 - **Minimum Gap**: 2 hours between random tweets
 
+![Image](https://github.com/user-attachments/assets/f24877e8-f933-4001-b8a3-e0d02e8fe044)
+
 ## Development
 
 ```bash
